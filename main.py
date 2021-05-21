@@ -75,13 +75,15 @@ def map_dataline_to_pipenode(line):
     Node.y = float(line[3])
     return Node
 
+
+# initialize the nodes of pipeline
 nodes = []
 with open('data.txt','r') as f :
     data_lines = f.readlines()
     for i in range(1,len(data_lines)):
         nodes.append(map_dataline_to_pipenode(data_lines[i]))
 
-# test for node.dist()
+# test for node.dist() 
 print("dist between I<1> I<4> : {}".format(nodes[0].dist(nodes[3])))
 print("dist between I<1> I<6> : {}".format(nodes[0].dist(nodes[5])))
 print("dist between I<1> I<20> : {}".format(nodes[0].dist(nodes[19])))
