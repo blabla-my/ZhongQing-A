@@ -27,6 +27,35 @@ print(distance)
 
 
 
+##### task
+
+存放一个请求的area 、 number 、 需求时间
+
+`task.linkto(dest)`: 建立一条到dest的有向边
+
+`task.get_parent()`: 返回task在图上的前继元
+
+`task.able_to_reach(dest)`: 是否能够在规定时间内到达dest节点
+
+
+
+##### create_graph
+
+建立tasks对应的有向图
+
+```python
+def create_graph(tasks):
+    list.sort(tasks)
+    for i in range(0,len(tasks)):
+        for j in range (i+1,len(tasks)):
+            if tasks[i].able_to_reach(tasks[j]):
+                tasks[i].linkto(tasks[j])
+```
+
+
+
+
+
 #### testcase
 
 ```python

@@ -1,6 +1,11 @@
 entry_cloumn_x = [1.5,83,164.5]
 ceil = 61.5
 floor = 1.5
+speed = 5
+
+unmount_delay = 3
+mount_delay = 3
+
 class reponode :
     def __init__(self,number,x,y):
         self.number = number 
@@ -56,3 +61,31 @@ class pipenode :
                 Y2  = self.y + dest.y
                 res+= min(Y1,Y2)
         return res
+
+
+# read data from data.txt
+def map_dataline_to_pipenode(line):
+    line = line.split('\t')
+    Node = pipenode()
+    if line[0] == 'I' : 
+        Node.area = 1
+    elif line[0] == 'II':
+        Node.area = 2
+    elif line[0] == 'III':
+        Node.area = 3
+    Node.number = int(line[1])
+    Node.x = float(line[2])
+    Node.y = float(line[3])
+    return Node
+
+
+# initialize the nodes of pipeline
+nodes = []
+with open('data.txt','r') as f :
+    data_lines = f.readlines()
+    for i in range(1,len(data_lines)):
+        nodes.append(map_dataline_to_pipenode(data_lines[i]))
+
+
+def idx(area,number):
+    return (area-1)*24 + number-1
