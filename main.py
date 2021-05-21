@@ -1,8 +1,6 @@
 import math
 from node import *
-entry_cloumn_x = [1.5,83,164.5]
-ceil = 61.5
-floor = 1.5
+
 # read data from data.txt
 def map_dataline_to_pipenode(line):
     line = line.split('\t')

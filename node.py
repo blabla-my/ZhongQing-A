@@ -1,3 +1,6 @@
+entry_cloumn_x = [1.5,83,164.5]
+ceil = 61.5
+floor = 1.5
 class reponode :
     def __init__(self,number,x,y):
         self.number = number 
@@ -12,7 +15,7 @@ class reponode :
             res+= abs(dest.x - mid)
             res+= abs(self.y - dest.y)
             return res
-            
+
 class pipenode :
     def __init__(self,area=0,number = 0, x=0, y=0):
         self.area = area
