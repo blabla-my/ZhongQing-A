@@ -1,6 +1,5 @@
 import math
 
-
 entry_cloumn_x = [1.5,83,164.5]
 ceil = 61.5
 floor = 1.5
@@ -16,7 +15,7 @@ class node :
         if self.area == 1 :
             return 0 if raw>0 else 1
         elif self.area == 2:
-            return 2 if raw>0 else 1
+            return 1 if raw>0 else 2
         else:
             return 1
 
@@ -28,13 +27,48 @@ class node :
             res+= abs( dest.x - entry_cloumn_x[dest.entry_column()] )
             res+= abs( self.y - dest.y)
         else:
-            res = abs( self.x - entry_cloumn_x[self.entry_column()] )
-            res+= abs( entry_cloumn_x[self.entry_column()] - entry_cloumn_x[dest.entry_column()] )
-            res+= abs( dest.x - entry_cloumn_x[dest.entry_column()] )
-            Y1 = abs(self.y-ceil) + abs(dest.y-ceil)
-            Y2 = self.y + dest.y
-            if Y1 < Y2 :
-                res += Y1
-            else:
-                res += Y2
+            if self.number <= 4 :
+                res = abs(self.x - entry_cloumn_x[dest.entry_column()])
+                res+= abs(dest.x - entry_cloumn_x[dest.entry_column()])
+                res+= abs(dest.y - self.y)
+            elif dest.number <= 4:
+                res = abs(dest.x - entry_cloumn_x[self.entry_column()])
+                res+= abs(self.x - entry_cloumn_x[self.entry_column()])
+                res+= abs(dest.y - self.y)
+            else :
+                res = abs( self.x - entry_cloumn_x[self.entry_column()] )
+                res+= abs( entry_cloumn_x[self.entry_column()] - entry_cloumn_x[dest.entry_column()] )
+                res+= abs( dest.x - entry_cloumn_x[dest.entry_column()] )
+                Y1  = abs(self.y-ceil) + abs(dest.y-ceil)
+                Y2  = self.y + dest.y
+                res+= min(Y1,Y2)
         return res
+
+
+# read data from data.txt
+def map_dataline_to_node(line):
+    line = line.split('\t')
+    Node = node()
+    if line[0] == 'I' : 
+        Node.area = 1
+    elif line[0] == 'II':
+        Node.area = 2
+    elif line[0] == 'III':
+        Node.area = 3
+    Node.number = int(line[1])
+    Node.x = float(line[2])
+    Node.y = float(line[3])
+    return Node
+
+nodes = []
+with open('data.txt','r') as f :
+    data_lines = f.readlines()
+    for i in range(1,len(data_lines)):
+        nodes.append(map_dataline_to_node(data_lines[i]))
+
+# test for node.dist()
+print("dist between I<1> I<4> : {}".format(nodes[0].dist(nodes[3])))
+print("dist between I<1> I<6> : {}".format(nodes[0].dist(nodes[5])))
+print("dist between I<1> I<20> : {}".format(nodes[0].dist(nodes[19])))
+print("dist between I<1> II<1> : {}".format(nodes[0].dist(nodes[24])))
+print("dist between I<1> II<6> : {}".format(nodes[0].dist(nodes[29])))
