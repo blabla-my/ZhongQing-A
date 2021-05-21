@@ -3,7 +3,7 @@ import math
 entry_cloumn_x = [1.5,83,164.5]
 ceil = 61.5
 floor = 1.5
-class node :
+class pipenode :
     def __init__(self,area=0,number = 0, x=0, y=0):
         self.area = area
         self.number = number
@@ -45,10 +45,25 @@ class node :
         return res
 
 
+class reponode :
+    def __init__(self,number,x,y):
+        self.number = number 
+        self.x = x
+        self.y = y
+    def dist(self,dest):
+        mid = entry_cloumn_x[1]
+        if self.y == dest.y:
+            return abs(self.x - dest.x)
+        else:
+            res = abs(self.x - mid)
+            res+= abs(dest.x - mid)
+            res+= abs(self.y - dest.y)
+            return res
+
 # read data from data.txt
-def map_dataline_to_node(line):
+def map_dataline_to_pipenode(line):
     line = line.split('\t')
-    Node = node()
+    Node = pipenode()
     if line[0] == 'I' : 
         Node.area = 1
     elif line[0] == 'II':
@@ -64,7 +79,7 @@ nodes = []
 with open('data.txt','r') as f :
     data_lines = f.readlines()
     for i in range(1,len(data_lines)):
-        nodes.append(map_dataline_to_node(data_lines[i]))
+        nodes.append(map_dataline_to_pipenode(data_lines[i]))
 
 # test for node.dist()
 print("dist between I<1> I<4> : {}".format(nodes[0].dist(nodes[3])))
