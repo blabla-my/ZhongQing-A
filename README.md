@@ -73,6 +73,37 @@ def create_graph(tasks):
 
 
 
+##### fetch_sequence_time
+
+给定一个任务序列，计算按顺序取零件要的时间
+
+从B点出发，终点为D
+
+
+
+##### min_fetch_sequence_time
+
+计算一个任务序列取零件的最短时间
+
+```python
+''' tasks2.txt
+1	I-3	112
+2	I-4	130
+3	I-20	150
+4	I-13	167
+'''
+
+tasks = []
+with open('tasks2.txt','r') as f:
+    Lines = f.readlines()
+    for line in Lines:
+        tasks.append(map_dataline_to_task(line))
+
+m, per_res = min_fetch_sequence_time(tasks[:4])
+
+# fetch sequence is 3 4 13 20, right
+```
+
 
 
 #### testcase
