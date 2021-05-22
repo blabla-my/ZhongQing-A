@@ -1,6 +1,19 @@
 from node import *
 import itertools
 import copy
+
+
+def judge(feseq,base=0):
+    alpha = 1
+    assert(len(feseq) <= 4)
+    mfst, per = min_fetch_sequence_time(feseq)
+    TL = mfst + feseq[0].dest.dist_to_D() / speed + base
+    
+    if TL > feseq[0].time :
+        return None,None
+    else:
+        return alpha*(feseq[0].time-TL)**2 + (1-alpha)*( feseq[-1].dest.dist_to_D() / speed + unmount_delay )**2, per
+
 class task :
     def __init__(self, area = 0, number = 0, sequence_number = 0, time = 0):
         self.dest = nodes[idx(area,number)]
@@ -31,7 +44,7 @@ class task :
         return self.time > another.time
     
     def __eq__(self,another):
-        return self.time == another.time
+        return self.number == another.number
 
 class task_graph :
     def __init__(self,tasks):
@@ -56,8 +69,10 @@ class task_graph :
                             break
         for pair in edges:
             i , j = pair
-            self.tasks[i].childs.remove(self.tasks[j])
-            self.tasks[j].parent.remove(self.tasks[i])
+            if self.tasks[j] in self.tasks[i].childs:
+                self.tasks[i].childs.remove(self.tasks[j])
+            if self.tasks[i] in self.tasks[j].parent:
+                self.tasks[j].parent.remove(self.tasks[i])
 
     def get_task(self,number):
         for t in self.tasks:
@@ -69,19 +84,24 @@ class task_graph :
         return len(self.tasks) == 0
     def show(self):
         for t in self.tasks:
-            print('{} --> {}'.format(t.number,list(map(lambda x: x.number ,t.childs))))
+            print('{} --> {}'.format(t.number,list(map(lambda x: x.number ,t.childs))),end = ' ')
+            print('parent {}'.format(list(map(lambda x:x.number,t.parent))))
         print("entry: {}".format(list(map(lambda x: x.number ,self.entry))))
 
     def remove(self,_task):
         if _task in self.tasks:
+           # print("remove number {}".format(_task.number))
             self.tasks.remove(_task)
         else:
             print("not in graph")
             return
+        #print("tag")
         for next in _task.childs :
+            #print(next.number,_task.number)
             next.parent.remove(_task)
             if len(next.parent) == 0:
                 self.entry.append(next)
+
         for pare in _task.parent :
             pare.childs.remove(_task)
         if _task in self.entry :
@@ -90,11 +110,16 @@ class task_graph :
     def gen_reply(self,carbase=0):
         Min = 99999999
         reply = None
+        per_res = None
         for e in self.entry:
             stack = []
             if len(e.childs) == 0:
-                Min = min(Min, judge([e]))
+                jud = judge([e],carbase)
+                if jud[0] == None:
+                    continue
+                Min = min(Min, jud[0])
                 reply = [e]
+                per_res = [e]
             else:
                 stack = list()
                 stack.append([e,0])
@@ -107,10 +132,11 @@ class task_graph :
                             for combine_num in range(2,5):
                                 feseqs = itertools.combinations(road,combine_num-1)
                                 for feseq in feseqs:
-                                    jud = judge([e] + list(feseq),carbase)
+                                    jud,per = judge([e] + list(feseq),carbase)
                                     if jud != None and jud < Min :
                                         Min = jud
                                         reply = copy.copy([e]+list(feseq))
+                                        per_res = copy.copy(per)
                             stack.pop()
                             if len(stack) == 0:
                                 break
@@ -122,7 +148,7 @@ class task_graph :
                         if len(stack) == 0:
                             break
                         stack[-1][1] += 1
-        return reply
+        return reply,per_res
     
 def create_graph(tasks):
     list.sort(tasks)
@@ -164,21 +190,12 @@ def min_fetch_sequence_time(feseq):
     for p in per:
         tmp = fetch_sequence_time(p)
         if Min > tmp:
-            per_res = p
+            per_res = copy.copy(p)
             Min = tmp
     return Min,per_res
 
-def judge(feseq,base=0):
-    assert(len(feseq) <= 4)
-    mfst, per = min_fetch_sequence_time(feseq)
-    TL = mfst + feseq[0].dest.dist_to_D() / speed + base
-    
-    if TL > feseq[0].time :
-        return None
-    else:
-        return (feseq[0].time-TL)**2 + ( feseq[-1].dest.dist_to_D() / speed + unmount_delay )**2
 
-        
+'''   
 tasks = []
 with open('tasks1.txt','r') as f:
     Lines = f.readlines()
@@ -198,3 +215,4 @@ while g.empty() != True :
             g.remove(r)
         g.show()
     
+'''
