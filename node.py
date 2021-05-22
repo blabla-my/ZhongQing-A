@@ -6,8 +6,13 @@ speed = 5
 unmount_delay = 3
 mount_delay = 3
 
+XB = 83
+YB = 111.5
+
+XD = 83
+YD = 61.5
 class reponode :
-    def __init__(self,number,x,y):
+    def __init__(self,number=0,x=0,y=0):
         self.number = number 
         self.x = x
         self.y = y
@@ -20,6 +25,13 @@ class reponode :
             res+= abs(dest.x - mid)
             res+= abs(self.y - dest.y)
             return res
+    def dist_to_B(self):
+        mid = entry_cloumn_x[1]
+        return abs(self.x - mid) + abs(self.y - YB)
+    def dist_to_D(self):
+        mid = entry_cloumn_x[1]
+        return abs(self.x - mid) + abs(self.y - YD)
+
 
 class pipenode :
     def __init__(self,area=0,number = 0, x=0, y=0):
@@ -62,22 +74,22 @@ class pipenode :
                 res+= min(Y1,Y2)
         return res
 
-
 # read data from data.txt
 def map_dataline_to_pipenode(line):
     line = line.split('\t')
-    Node = pipenode()
     if line[0] == 'I' : 
+        Node = pipenode()
         Node.area = 1
     elif line[0] == 'II':
+        Node = pipenode()
         Node.area = 2
     elif line[0] == 'III':
-        Node.area = 3
+        Node = reponode()
+        
     Node.number = int(line[1])
     Node.x = float(line[2])
     Node.y = float(line[3])
     return Node
-
 
 # initialize the nodes of pipeline
 nodes = []
