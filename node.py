@@ -73,6 +73,14 @@ class pipenode :
                 Y2  = self.y + dest.y
                 res+= min(Y1,Y2)
         return res
+    def dist_to_D(self):
+        if self.number <= 4 :
+            return abs(self.x-XD)
+        else:
+            res = abs(self.x - entry_cloumn_x[self.entry_column()])
+            res+= abs(entry_cloumn_x[self.entry_column()] - XD)
+            res+= abs(self.y - YD)
+            return res
 
 # read data from data.txt
 def map_dataline_to_pipenode(line):
